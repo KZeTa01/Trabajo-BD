@@ -2,11 +2,14 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class VentanaPrincipal extends JFrame implements ActionListener{
     JTextField Nombre,correo,telefono,ciudad; 
     JButton Guardar,Listar; 
     JPanel N,C,T,CI,BT,Izquierda,Derech; 
+    JTable tabla;
+    DefaultTableModel modeloTabla;
 
     public VentanaPrincipal(){
         configurarVentana();
@@ -14,18 +17,17 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
     }
 
     public void configurarVentana(){
-        setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(500,600);
+        setSize(800,400);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(1,2));
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
     }
 
     public void cargarComponentes(){
-        Nombre = new JTextField(5);
-        correo = new JTextField(5);
-        telefono = new JTextField(5);
-        ciudad = new JTextField(5);
+        Nombre = new JTextField(15);
+        correo = new JTextField(15);
+        telefono = new JTextField(15);
+        ciudad = new JTextField(15);
 
         N = new JPanel(new FlowLayout(FlowLayout.LEFT,4,4)); 
         N.add(new JLabel("Nombre: "));
@@ -53,7 +55,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
 
         
         BT = new JPanel(new FlowLayout(FlowLayout.LEFT,4,4));
-        Guardar = new JButton("Guardad"); 
+        Guardar = new JButton("Guardar"); 
         Listar = new JButton("Listar");
         BT.add(Listar,FlowLayout.LEFT);
         BT.add(Guardar,FlowLayout.LEFT);
@@ -72,17 +74,34 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
 
         Derech = new JPanel();
 
-
-
+        modeloTabla = new DefaultTableModel();
+        modeloTabla.addColumn("ID");
+        modeloTabla.addColumn("Nombre");
+        modeloTabla.addColumn("Correo");
+        modeloTabla.addColumn("Telefono");
+        modeloTabla.addColumn("Ciudad");
+        tabla = new JTable(modeloTabla);
+        JScrollPane scroll = new JScrollPane(tabla);
+        Derech.add(scroll);
 
         add(Izquierda);
+        add(Box.createHorizontalStrut(10));
         add(Derech);
 
-
+        Guardar.addActionListener(this);
+        Listar.addActionListener(this);
 
     }
 
     public void actionPerformed(ActionEvent e){
+        if (e.getSource() == Guardar) {
+            String nombre = Nombre.getText();
+            String correo = this.correo.getText();
+            String telefono = this.telefono.getText();
+            String ciudad = this.ciudad.getText();
 
+            Object[] datos = { modeloTabla.getRowCount()+1,nombre, correo, telefono, ciudad};
+            modeloTabla.addRow(datos);
+        }
     }
 }
