@@ -4,6 +4,8 @@ public class Clientes {
     private String telefono;
     private String ciudad;
 
+    public Clientes() {
+    }
 
     public Clientes(String nombres, String correo, String telefono, String ciudad) {
         this.nombres = nombres;
