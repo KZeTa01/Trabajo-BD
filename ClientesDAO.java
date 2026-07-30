@@ -37,6 +37,7 @@ public class ClientesDAO {
 
             while (rs.next()) {
                 Clientes cliente = new Clientes();
+                cliente.setId(rs.getInt("id"));
                 cliente.setNombres(rs.getString("nombre"));
                 cliente.setCorreo(rs.getString("correo"));
                 cliente.setTelefono(rs.getString("telefono"));

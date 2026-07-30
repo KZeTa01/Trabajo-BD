@@ -1,4 +1,5 @@
 public class Clientes {
+    private int id;
     private String nombres;
     private String correo;
     private String telefono;
@@ -12,6 +13,22 @@ public class Clientes {
         this.correo = correo;
         this.telefono = telefono;
         this.ciudad = ciudad;
+    }
+
+        public Clientes( int id, String nombres, String correo, String telefono, String ciudad) {
+        this.id=id;
+        this.nombres = nombres;
+        this.correo = correo;
+        this.telefono = telefono;
+        this.ciudad = ciudad;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public String getNombres() {

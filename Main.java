@@ -1,6 +1,10 @@
+import javax.swing.SwingUtilities;
+
 public class Main{
-    public static void main(String args[]){
-        VentanaPrincipal v = new VentanaPrincipal(); 
-        v.setVisible(true);
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            VentanaPrincipal ventana = new VentanaPrincipal();
+            ventana.setVisible(true);
+        });
     }
 }

@@ -1,17 +1,21 @@
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.util.List;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
-public class VentanaPrincipal extends JFrame implements ActionListener{
+public class VentanaPrincipal extends JFrame {
     JTextField Nombre,correo,telefono,ciudad; 
     JButton Guardar,Listar; 
     JPanel N,C,T,CI,BT,Izquierda,Derech; 
     JTable tabla;
     DefaultTableModel modeloTabla;
 
+    private final ClientesDAO clientesDAO;
+
     public VentanaPrincipal(){
+        clientesDAO = new ClientesDAO();
         configurarVentana();
         cargarComponentes();
     }
@@ -24,6 +28,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
     }
 
     public void cargarComponentes(){
+        
         Nombre = new JTextField(15);
         correo = new JTextField(15);
         telefono = new JTextField(15);
@@ -74,13 +79,14 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
 
         Derech = new JPanel();
 
-        modeloTabla = new DefaultTableModel();
-        modeloTabla.addColumn("ID");
-        modeloTabla.addColumn("Nombre");
-        modeloTabla.addColumn("Correo");
-        modeloTabla.addColumn("Telefono");
-        modeloTabla.addColumn("Ciudad");
-        tabla = new JTable(modeloTabla);
+        modeloTabla = new DefaultTableModel(
+        new Object[]{"ID", "Nombre", "Correo", "Telefono", "Ciudad"}, 0) {
+            @Override
+            public boolean isCellEditable(int fila, int columna) {  //Para bloquear opción de editar celdas
+            return false;
+            }
+        };
+        JTable tabla = new JTable(modeloTabla);
         JScrollPane scroll = new JScrollPane(tabla);
         Derech.add(scroll);
 
@@ -88,12 +94,62 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
         add(Box.createHorizontalStrut(10));
         add(Derech);
 
-        Guardar.addActionListener(this);
-        Listar.addActionListener(this);
+        Guardar.addActionListener(e -> guardarCliente());
+        Listar.addActionListener(e -> listarClientes());
 
     }
 
-    public void actionPerformed(ActionEvent e){
+    private void guardarCliente() {
+        String nombre = Nombre.getText().trim();
+        String correo = this.correo.getText().trim();
+        String telefono = this.telefono.getText().trim();
+        String ciudad = this.ciudad.getText().trim();
+
+        if (nombre.isEmpty() || correo.isEmpty() || telefono.isEmpty() || ciudad.isEmpty()) {
+            JOptionPane.showMessageDialog(
+            this,
+            "Complete todos los campos.",
+            "Validación",
+            JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Clientes cliente = new Clientes(nombre, correo, telefono, ciudad);
+        boolean registrado = clientesDAO.registrar(cliente);
+        if (registrado) {
+            JOptionPane.showMessageDialog(this, "Cliente registrado.");
+            limpiarCampos();
+            listarClientes();
+        } else {
+            JOptionPane.showMessageDialog(
+            this,
+            "No fue posible registrar al cliente.",
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void listarClientes() {
+        modeloTabla.setRowCount(0);
+        List<Clientes> clientes = clientesDAO.listar();
+        for (Clientes cliente : clientes) {
+            modeloTabla.addRow(new Object[]{
+            cliente.getId(),
+            cliente.getNombres(),
+            cliente.getCorreo(),
+            cliente.getTelefono(),
+            cliente.getCiudad()
+            });
+        }
+    }
+    private void limpiarCampos() {
+        Nombre.setText("");
+        correo.setText("");
+        telefono.setText("");
+        ciudad.requestFocus();
+    }
+
+    /*public void actionPerformed(ActionEvent e){
         if (e.getSource() == Guardar) {
             String nombre = Nombre.getText();
             String correo = this.correo.getText();
@@ -103,5 +159,5 @@ public class VentanaPrincipal extends JFrame implements ActionListener{
             Object[] datos = { modeloTabla.getRowCount()+1,nombre, correo, telefono, ciudad};
             modeloTabla.addRow(datos);
         }
-    }
+    }*/
 }
